@@ -1,0 +1,27 @@
+{
+  "name": "notion-form-integration",
+  "private": true,
+  "scripts": {
+    "lint": "turbo run lint",
+    "build": "turbo run build --filter=platform",
+    "dev": "turbo run dev",
+    "start": "turbo run start --filter=platform",
+    "db:push": "pnpm --filter=platform db:push",
+    "dev:staging": "pnpm --filter platform dev:staging",
+    "dev:prod": "pnpm --filter platform dev:prod",
+    "db:push:staging": "pnpm --filter platform db:push:staging",
+    "db:push:prod": "pnpm --filter platform db:push:prod",
+    "check-env": "pnpm --filter platform check-env",
+    "check-env:staging": "pnpm --filter platform check-env:staging",
+    "check-env:prod": "pnpm --filter platform check-env:prod"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.6.3",
+    "typescript": "^5.9.2"
+  },
+  "packageManager": "pnpm@10.18.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

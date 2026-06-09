@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int    @id @default(autoincrement())
+  webflowUserId String @unique
+  email         String @unique
+  firstName     String
+  lastName      String
+  accessToken   String
+
+  sites Site[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Site {
+  id          Int     @id @default(autoincrement())
+  siteId      String  @unique
+  workspaceId String
+  displayName String
+  previewUrl  String?
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+  dashboardUserId Int?
+  dashboardUser   DashboardUser? @relation(fields: [dashboardUserId], references: [id])
+
+  licenseStatus String  @default("inactive") // "active" | "inactive" | "trial"
+  licenseKey    String? // the upstream key currently bound to this site; cleared when the key moves
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([licenseKey])
+}
+
+model Integration {
+  id     Int    @id @default(autoincrement())
+  siteId String
+  formId String
+  pageId String
+
+  type   IntegrationType @default(WEBHOOK)
+  config Json
+
+  isActive    Boolean   @default(true)
+  retryCount  Int       @default(3)
+  lastSuccess DateTime?
+  lastError   String?
+
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+  IntegrationCredential   IntegrationCredential? @relation(fields: [integrationCredentialId], references: [id])
+  integrationCredentialId Int?
+}
+
+model IntegrationLog {
+  id              String   @id @default(cuid())
+  siteId          String
+  formId          String
+  integrationType String // e.g. 'notion', 'webhook'
+  status          String // 'success' or 'failed'
+  message         String?
+  idempotencyKey  String?  @unique
+  dashboardUserId Int? // owner; surfaces test pings & generic logs without a site context
+  createdAt       DateTime @default(now())
+
+  @@index([integrationType, createdAt])
+  @@index([dashboardUserId, createdAt])
+}
+
+model GlobalIntegration {
+  id              Int     @id @default(autoincrement())
+  siteId          String
+  formId          String
+  formElementId   String?
+  pageId          String
+  integrationName String?
+
+  type   IntegrationType @default(WEBHOOK)
+  config Json
+
+  isActive    Boolean   @default(true)
+  retryCount  Int       @default(3)
+  lastSuccess DateTime?
+  lastError   String?
+
+  // Optional relation (many integrations can share same credential)
+  credentialId Int?
+  credential   IntegrationCredential? @relation(fields: [credentialId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([formId])
+  @@index([siteId, formElementId])
+}
+
+model IntegrationCredential {
+  id             Int     @id @default(autoincrement())
+  siteId         String
+  type           String
+  connectionName String
+  url            String?
+  apiKey         String?
+  accessToken    String?
+  refreshToken   String?
+  expiresAt      Int?
+  extraData      Json?
+  dashboardUserId Int?
+  dashboardUser   DashboardUser? @relation(fields: [dashboardUserId], references: [id])
+
+  // Back-reference (can have many integrations)
+  integrations Integration[]
+
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  GlobalIntegration GlobalIntegration[]
+}
+
+enum IntegrationType {
+  WEBHOOKCONNECTION
+  WEBHOOK
+  NOTION
+  NOTIONCONNECTION
+}
+
+model DashboardUser {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  sites         Site[]
+  credentials   IntegrationCredential[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
