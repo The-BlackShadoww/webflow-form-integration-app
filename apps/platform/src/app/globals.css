@@ -1,5 +1,188 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* ================================================================
+   DESIGN SYSTEM — mapped from DESIGN.md
+   ================================================================ */
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* ── Font Families ─────────────────────────────────────────────
+     DESIGN.md specifies rb-freigeist-neue → Bricolage Grotesque (substitute)
+                         basier-square     → Geist (substitute)
+                         jetbrains-mono    → JetBrains Mono (open source, use directly)
+  */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  /* ── Colors — Brand & Accent ───────────────────────────────── */
+  --color-primary: #ea2804;
+  --color-primary-deep: #c01f00;
+  --color-hero-glow: #ff6a3d;
+  --color-hero-pink: #f4a8a0;
+  --color-on-primary: #ffffff;
+
+  /* ── Colors — Surface ──────────────────────────────────────── */
+  --color-canvas: #f9f7f3;
+  --color-surface-bone: #f3f0e8;
+  --color-surface-card: #ffffff;
+  --color-surface-dark: #202020;
+  --color-surface-deep: #000000;
+  --color-hairline: rgba(32, 32, 32, 0.12);
+  --color-hairline-strong: #202020;
+
+  /* ── Colors — Text ─────────────────────────────────────────── */
+  --color-ink: #202020;
+  --color-body: #3a3a3a;
+  --color-charcoal: #575757;
+  --color-mute: #646464;
+  --color-ash: #8d8d8d;
+  --color-stone: #bbbbbb;
+  --color-on-dark: #fcfcfc;
+  --color-on-dark-mute: rgba(252, 252, 252, 0.72);
+
+  /* ── Colors — Semantic ─────────────────────────────────────── */
+  --color-badge-success: #2b9a66;
+  --color-link: #ea2804;
+  --color-ring-focus: rgba(59, 130, 246, 0.5);
+  --color-github-dark: #24292e;
+  --color-divider-dark: rgba(252, 252, 252, 0.12);
+
+  /* ── Shadcn-compatible semantic aliases ─────────────────────
+     These map the old shadcn/Radix variable names to DESIGN.md tokens
+     so existing UI component classes (bg-background, text-foreground, etc.)
+     resolve correctly without touching every component file.
+  */
+  --color-background: #f9f7f3;
+  --color-foreground: #202020;
+  --color-card: #ffffff;
+  --color-card-foreground: #202020;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #202020;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f3f0e8;
+  --color-secondary-foreground: #202020;
+  --color-muted: #f3f0e8;
+  --color-muted-foreground: #646464;
+  --color-accent: #f3f0e8;
+  --color-accent-foreground: #202020;
+  --color-destructive: #dc2626;
+  --color-border: rgba(32, 32, 32, 0.12);
+  --color-input: rgba(32, 32, 32, 0.12);
+  --color-ring: rgba(59, 130, 246, 0.5);
+
+  /* ── Border Radius ─────────────────────────────────────────── */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* ── Spacing extras ────────────────────────────────────────── */
+  --spacing-section: 96px;
+  --spacing-band: 160px;
+}
+
+/* ================================================================
+   BASE STYLES
+   ================================================================ */
+
+html {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-body);
+  background-color: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Container ───────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ── Display typography helper ───────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ── Utility: surface-strong (used by components for hover states) */
+.bg-surface-strong {
+  background-color: var(--color-surface-bone);
+}
+
+/* ── Utility: canvas-soft (used in marketing sections) ───── */
+.bg-canvas-soft {
+  background-color: var(--color-surface-bone);
+}
+
+/* ── Orbs (decorative gradient blobs on marketing/auth pages) ── */
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(100px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+.orb-mint {
+  background: radial-gradient(circle, #a7f3d0 0%, transparent 70%);
+}
+.orb-peach {
+  background: radial-gradient(circle, var(--color-hero-pink) 0%, transparent 70%);
+}
+.orb-lavender {
+  background: radial-gradient(circle, #c4b5fd 0%, transparent 70%);
+}
+.orb-sky {
+  background: radial-gradient(circle, #7dd3fc 0%, transparent 70%);
+}
+
+/* ── Hero atmospheric mesh (home page only) ──────────────────── */
+.hero-mesh {
+  background:
+    radial-gradient(ellipse at 40% 50%, var(--color-primary) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 30%, var(--color-hero-glow) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, var(--color-hero-pink) 0%, transparent 60%);
+}
+
+/* ── Link color ──────────────────────────────────────────────── */
+a:not([class]) {
+  color: var(--color-link);
+}
+
+/* ── Focus ring ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-ring-focus);
+}
+
+/* ── Selection ───────────────────────────────────────────────── */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* ── Scrollbar (subtle) ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-stone);
+  border-radius: 9999px;
 }
