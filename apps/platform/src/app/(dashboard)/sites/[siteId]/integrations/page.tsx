@@ -24,19 +24,24 @@ export default function IntegrationsPage() {
   creds.forEach((c: any) => {
     const k = String(c.type).toLowerCase();
     const arr = credsByType.get(k) ?? [];
-    arr.push(c); credsByType.set(k, arr);
+    arr.push(c);
+    credsByType.set(k, arr);
   });
-
 
   return (
     <>
       <div className="mb-2">
-        <Link href={`/sites/${siteId}`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          href={`/sites/${siteId}`}
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="size-3.5" /> Back to site
         </Link>
       </div>
       <div className="mb-6">
-        <h1 className="font-serif text-4xl font-normal tracking-tight text-foreground">Integrations</h1>
+        <h1 className="font-serif text-4xl font-normal tracking-tight text-foreground">
+          Integrations
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground font-mono">{siteId}</p>
       </div>
 
@@ -53,7 +58,11 @@ export default function IntegrationsPage() {
             return (
               <Card
                 key={p.slug}
-                className={enabled ? "cursor-pointer transition hover:border-foreground/30" : "opacity-50"}
+                className={
+                  enabled
+                    ? "cursor-pointer transition hover:border-foreground/30"
+                    : "opacity-50"
+                }
                 onClick={() => enabled && setSelected(p)}
               >
                 <CardContent className="flex items-start gap-3 p-4">
@@ -61,14 +70,20 @@ export default function IntegrationsPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="font-medium">{p.name}</p>
-                      {!enabled && <Badge variant="secondary" className="text-[10px]">Soon</Badge>}
+                      {!enabled && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          Soon
+                        </Badge>
+                      )}
                       {hasConnections && (
                         <Badge className="bg-emerald-500/15 text-emerald-600 text-[10px]">
                           {list.length} connected
                         </Badge>
                       )}
                     </div>
-                    <p className="text-muted-foreground text-xs mt-0.5">{p.description}</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">
+                      {p.description}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -77,7 +92,11 @@ export default function IntegrationsPage() {
         </div>
       )}
 
-      <ConnectionDialog open={!!selected} onOpenChange={(v) => !v && setSelected(null)} presetProvider={selected} />
+      <ConnectionDialog
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+        presetProvider={selected}
+      />
     </>
   );
 }

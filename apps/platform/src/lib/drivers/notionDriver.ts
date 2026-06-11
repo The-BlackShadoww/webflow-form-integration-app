@@ -23,12 +23,15 @@ const getCachedNotionSchema = async (
     return cached.schema;
   }
 
-  const dbRes = await axios.get(`https://api.notion.com/v1/databases/${databaseId}`, {
-    headers: {
-      Authorization: `Bearer ${notionToken}`,
-      "Notion-Version": notionVersion,
+  const dbRes = await axios.get(
+    `https://api.notion.com/v1/databases/${databaseId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${notionToken}`,
+        "Notion-Version": notionVersion,
+      },
     },
-  });
+  );
 
   const schema = dbRes.data.properties || {};
 
@@ -65,11 +68,16 @@ export const notionDriver: IntegrationDriver = {
     });
     if (!integrationCredential) throw new Error("Notion config not found");
 
-    const databaseId = integration.config.databaseId ?? integration.config.destinationId;
+    const databaseId =
+      integration.config.databaseId ?? integration.config.destinationId;
     if (!databaseId) throw new Error("Notion databaseId is missing in config.");
 
-    const notionToken = integrationCredential.accessToken ?? integrationCredential.apiKey;
-    if (!notionToken) throw new Error("Notion token missing (OAuth access token or integration API key).");
+    const notionToken =
+      integrationCredential.accessToken ?? integrationCredential.apiKey;
+    if (!notionToken)
+      throw new Error(
+        "Notion token missing (OAuth access token or integration API key).",
+      );
     const notionVersion = "2022-06-28";
     const schemaCacheKey = `${integrationCredential.id}:${databaseId}`;
 
@@ -77,16 +85,29 @@ export const notionDriver: IntegrationDriver = {
     //   1. New: integration.config.fieldMapping = [{ webflowField, providerField }]
     //   2. Legacy A: integration.config.merge_fields with "<type>__<col>": webflowField keys
     //   3. Legacy B: integration.config.merge_fields with "<col>": webflowField keys (no type prefix)
-    let rowMergeFields: Array<{ notionColumnName: string; formField: string }> = [];
-    if (Array.isArray(integration.config.fieldMapping) && integration.config.fieldMapping.length) {
+    let rowMergeFields: Array<{ notionColumnName: string; formField: string }> =
+      [];
+
+    if (
+      Array.isArray(integration.config.fieldMapping) &&
+      integration.config.fieldMapping.length
+    ) {
       rowMergeFields = integration.config.fieldMapping
         .filter((m: any) => m?.providerField && m?.webflowField)
-        .map((m: any) => ({ notionColumnName: m.providerField, formField: m.webflowField }));
-    } else if (integration.config.merge_fields && Object.keys(integration.config.merge_fields).length) {
-      rowMergeFields = cleanData(integration.config.merge_fields).map((r: any) => ({
-        notionColumnName: r.notionColumnName ?? r.type, // fallback when key had no "__" prefix
-        formField: r.formField,
-      }));
+        .map((m: any) => ({
+          notionColumnName: m.providerField,
+          formField: m.webflowField,
+        }));
+    } else if (
+      integration.config.merge_fields &&
+      Object.keys(integration.config.merge_fields).length
+    ) {
+      rowMergeFields = cleanData(integration.config.merge_fields).map(
+        (r: any) => ({
+          notionColumnName: r.notionColumnName ?? r.type, // fallback when key had no "__" prefix
+          formField: r.formField,
+        }),
+      );
     }
 
     const mergeFieldsConfig: Record<string, string> = rowMergeFields.reduce(
@@ -178,7 +199,10 @@ export const notionDriver: IntegrationDriver = {
             // Accept a single URL or comma-separated URLs
             const fileUrls = Array.isArray(value)
               ? value
-              : String(value).split(",").map((v) => v.trim()).filter(Boolean);
+              : String(value)
+                  .split(",")
+                  .map((v) => v.trim())
+                  .filter(Boolean);
             properties[notionColumnName] = {
               files: fileUrls.map((u: string) => ({
                 type: "external",
