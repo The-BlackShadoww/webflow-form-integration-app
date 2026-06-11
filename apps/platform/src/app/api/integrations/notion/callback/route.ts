@@ -8,6 +8,7 @@ const closePopup = (msg: string, ok: boolean) =>
   closeOauthPopup("notion", ok, msg);
 
 export async function GET(req: NextRequest) {
+  console.log("=================Notion callback HIT=================");
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");

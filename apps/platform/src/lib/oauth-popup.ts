@@ -1,7 +1,16 @@
 import { NextResponse } from "next/server";
 
-export function closeOauthPopup(provider: string, ok: boolean, message: string) {
-  const payload = JSON.stringify({ source: "flowappz-oauth", provider, ok, message });
+export function closeOauthPopup(
+  provider: string,
+  ok: boolean,
+  message: string,
+) {
+  const payload = JSON.stringify({
+    source: "flowappz-oauth",
+    provider,
+    ok,
+    message,
+  });
   return new NextResponse(
     `<!DOCTYPE html><html><body style="font-family:system-ui;padding:32px;text-align:center;">
       <h2>${ok ? "Connected" : "Failed"}</h2>
