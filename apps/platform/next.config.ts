@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     "p3000.kbtanvir.dev",
     "*.kbtanvir.dev",
     "fuji-highlights-letter-query.trycloudflare.com",
+    "became-factors-arm-watson.trycloudflare.com",
   ],
 };
 

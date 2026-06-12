@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
-import { Button } from "@/components/ui/button";
+import { AuthNav } from "./_components/auth-nav";
 
 /* ── DESIGN.md nav-bar ─────────────────────────────────────────
    bg-canvas, height 60px, single hairline bottom border.
@@ -38,12 +38,7 @@ export default function MarketingLayout({
             </Link>
           </nav>
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/sign-in">Sign in</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href="/sign-up">Get started</Link>
-            </Button>
+            <AuthNav />
           </div>
         </div>
       </header>
